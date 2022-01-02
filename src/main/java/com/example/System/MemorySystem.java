@@ -81,24 +81,12 @@ public class MemorySystem implements MainSystem {
     }
 
     public User login(String username, String password) {
-        if (userDatabase.get(username).getUserData().getPassword().equals(password)) {
-            User user = userDatabase.get(username);
-            if (user instanceof Admin)
+        User user = userDatabase.get(username);
+        if(user == null)
+            return null;
+        if (user.getUserData().getPassword().equals(password)) {
                 return user;
-            if (user instanceof Driver) {
-                if (((Driver) user).getState() == State.Suspended) {
-                    System.out.println("This account is suspended");
-                } else if (((Driver) user).getState() == State.Pending) {
-                    System.out.println("This account is pending");
-                } else return user;
-            } else if (user instanceof Client) {
-                if (((Client) user).getState() == State.Suspended) {
-                    System.out.println("This account is suspended");
-                } else return user;
-            }
-
-        } else
-            System.out.println("username or password is wrong");
+        }
         return null;
     }
 

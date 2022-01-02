@@ -33,6 +33,14 @@ public class Info {
         this.password = data.password;
         this.dob = data.dob;
     }
+    public Info()
+    {
+        this.userName = null;
+        this.mobileNumber = null;
+        this.email = null;
+        this.password = null;
+        this.dob = null;
+    }
 
 
 

@@ -123,6 +123,9 @@ public class Driver extends User {
             System.out.println();
         }
     }
+    public ArrayList<UserRating> ListUserRatings(){
+        return userRatings;
+    }
 
     public boolean listRides(MainSystem system) {
         rideRequests = new ArrayList<>();

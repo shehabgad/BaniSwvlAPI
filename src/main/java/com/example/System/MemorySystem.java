@@ -169,9 +169,7 @@ public class MemorySystem implements MainSystem {
 
         return true;
     }
-    public ArrayList<Driver> ListPendingDrivers() {
-        return pendingDrivers;
-    }
+
     public boolean clientAcceptOffer(Offer offer, Client client) {
 
         rideRequests.remove(offer.getRideRequest());

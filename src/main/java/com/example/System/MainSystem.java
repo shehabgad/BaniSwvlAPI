@@ -47,7 +47,5 @@ public interface MainSystem {
 
     void addUser(User user);
 
-    ArrayList<Driver> ListPendingDrivers();
-
     ArrayList<Driver> getPendingDrivers();
 }

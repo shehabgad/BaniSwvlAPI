@@ -1,9 +1,7 @@
 package com.example.BaniSWVL;
 
-
-import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -16,6 +14,7 @@ import com.example.Rides.RideRequest;
 import com.example.Users.*;
 import com.example.System.MainSystem;
 import com.example.System.MemorySystem;
+import org.springframework.expression.ParseException;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -28,7 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class BaniSwvlController {
     private MainSystem system;
     private User currentUser;
-    public BaniSwvlController() {system = new MemorySystem(); currentUser = null;}
+    static User admin1 = new Admin(new Info("peter", "010000000", "0000000000", "00", null));
+    public BaniSwvlController() {system = new MemorySystem(); currentUser = null; system.addAdmin(admin1);}
 
 //    authentication
     @PostMapping("/signup/user/client")
@@ -47,7 +47,7 @@ public class BaniSwvlController {
     }
 
     @PostMapping("/signup/user/driver")
-    public String signupDriver(@RequestBody Map<String, String> json) throws ParseException {
+    public String signupDriver(@RequestBody Map<String, String> json) throws ParseException, java.text.ParseException {
         System.out.println(json);
         if(currentUser != null)
             return "you are already logged in please logout to make a new account";
@@ -147,7 +147,7 @@ public class BaniSwvlController {
             if (system.checkdriver((Driver) currentUser, rideRequest.getSource()))
                 rideRequests.add(rideRequest);
         }
-        if(index >= rideRequests.size())
+        if(index > rideRequests.size())
             return "please enter a valid index";
         boolean success = system.driverMakingOffer((Driver) currentUser,rideRequests.get(index),price);
         if(success)
@@ -294,17 +294,15 @@ public class BaniSwvlController {
      else {return null;} }
     @GetMapping("/admin/getusers")
     public ArrayList<User> getAllUsers(){
-        if(currentUser instanceof Admin){
-            return system.getAllUsers();
-        }
-        else
-            return null;
+        if(currentUser instanceof Admin){return system.getAllUsers();}
+        else {return null;}
     }
 
     @PostMapping("/admin/verifyDriver")
-    public String verifyDriver(@RequestBody String userName){
+    public String verifyDriver(@RequestBody Map<String,String> json){
+        String userName = json.get("userName");
         if(currentUser instanceof Admin){
-            if(userName!=null && system.getPendingDrivers().contains(userName)) {
+            if(userName!=null && system.checkPendingDrivers(userName)) {
                 ((Admin) currentUser).verifyDriverRegistration(userName, getPendingDrivers());
                 return "Driver is accepted successfully!";
             }
@@ -313,7 +311,7 @@ public class BaniSwvlController {
         else{return "Error";}
     }
     @PostMapping("/admin/addDiscount")
-    public String verifyDriver(@RequestBody Map<String,String> json){
+    public String VerifyDriver(@RequestBody Map<String,String> json){
         if(currentUser == null)
             return "you are not logged in";
         if(currentUser instanceof Admin){
@@ -339,7 +337,8 @@ public class BaniSwvlController {
             if(userName!=null && system.getUser(userName)!=null ) {
                 User user = system.getUser(userName);
                 ((Admin) currentUser).suspendUser(user);
-                return "Driver is suspended successfully!";
+                if(user.setState(State.Suspended)){return "Driver is already suspended";}
+                else {return "Driver is suspended successfully!";}
             }
             else{return "Driver doesn't exist!";}
         }

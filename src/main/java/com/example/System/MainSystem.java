@@ -48,8 +48,6 @@ public interface MainSystem {
     void addUser(User user);
 
     public ArrayList<User> getAllUsers();
-
-    ArrayList<Driver> ListPendingDrivers();
-
+    public boolean checkPendingDrivers(String userName);
     ArrayList<Driver> getPendingDrivers();
 }

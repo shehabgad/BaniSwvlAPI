@@ -47,7 +47,12 @@ public class MemorySystem implements MainSystem {
             return AreaToDriverMap.get(Area).contains(d.getUserData().getUserName());
         return false;
     }
-
+    public boolean checkPendingDrivers(String userName) {
+        for (Driver pendingDriver : pendingDrivers) {
+            if (pendingDriver.getUserData().getUserName().equals(userName)) {return true;}
+        }
+        return false;
+    }
     public ArrayList<RideRequest> getRideRequests() {
         return rideRequests;
     }

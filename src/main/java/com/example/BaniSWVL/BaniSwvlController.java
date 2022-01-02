@@ -10,6 +10,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.example.Log.Log;
+import com.example.Rides.Offer;
+import com.example.Rides.RideRequest;
 import com.example.Users.*;
 import com.example.System.MainSystem;
 import com.example.System.MemorySystem;
@@ -107,6 +109,91 @@ public class BaniSwvlController {
         return "Success! you are logged out";
 
     }
+    @GetMapping("/driver/getrides")
+    public List<RideRequest> getRideRequests(){
+        if (currentUser == null)
+        {
+            return null;
+        }
+        if(!(currentUser instanceof Driver))
+            return null;
+        List<RideRequest> rideRequests = new ArrayList<RideRequest>();
+        for (RideRequest rideRequest : system.getRideRequests()) {
+            if (system.checkdriver((Driver) currentUser, rideRequest.getSource()))
+                rideRequests.add(rideRequest);
+        }
+        return rideRequests;
+    }
+    @PostMapping("/driver/makeoffer")
+    public String makeOffer(@RequestBody Map<String,String> json) {
+        if (currentUser == null)
+        {
+            return "you are not logged in";
+        }
+        if(!(currentUser instanceof Driver))
+            return "you are not a driver";
+        if(((Driver) currentUser).getState() == State.Busy)
+        {
+            return "you are busy now!";
+        }
+        int index = Integer.parseInt(json.get("index"));
+        double price = Double.parseDouble(json.get("price"));
+        List<RideRequest> rideRequests = new ArrayList<RideRequest>();
+        for (RideRequest rideRequest : system.getRideRequests()) {
+            if (system.checkdriver((Driver) currentUser, rideRequest.getSource()))
+                rideRequests.add(rideRequest);
+        }
+        if(index >= rideRequests.size())
+            return "please enter a valid index";
+        boolean success = system.driverMakingOffer((Driver) currentUser,rideRequests.get(index),price);
+        if(success)
+            return "Success! Offer is added and client is notified";
+        else
+            return "Failure";
+    }
+
+    @GetMapping("/driver/getoffers")
+    public List<Offer> getOffers()
+    {
+        if (currentUser == null)
+        {
+            return null;
+        }
+        if(!(currentUser instanceof Driver))
+            return null;
+        return ((Driver) currentUser).getOffers();
+    }
+    @GetMapping("/driver/notifyarrival")
+    public String notifyArrival()
+    {
+        if (currentUser == null)
+        {
+            return "your are not logged in";
+        }
+        if(!(currentUser instanceof Driver))
+            return "you are not a driver";
+        if(((Driver)currentUser).getState() == State.Available)
+            return "you are not busy with a ride";
+        ((Driver)currentUser).arrivalAtLocation(system);
+        return "client has been notified by your arrival";
+    }
+    @GetMapping("/driver/endride")
+    public String endRide()
+    {
+        if (currentUser == null)
+        {
+            return "your are not logged in";
+        }
+        if(!(currentUser instanceof Driver))
+            return "you are not a driver";
+        if(((Driver)currentUser).getState() == State.Available)
+            return "you are not busy with a ride";
+        ((Driver)currentUser).endRide(system);
+        return "Success! ride has been finished";
+    }
+
+
+//
     @GetMapping("/baniswvl/PendingDrivers")
     public ArrayList<Driver> getPendingDrivers(){
         if(currentUser instanceof Admin){

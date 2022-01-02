@@ -7,10 +7,7 @@ import com.example.Rides.RideRequest;
 import com.example.System.MainSystem;
 import com.example.UI.Main;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class Driver extends User {
     private final Set<String> areas;
@@ -79,14 +76,14 @@ public class Driver extends User {
         return this;
     }
 
-    private void endRide(MainSystem system) {
+    public void endRide(MainSystem system) {
         Date date = new Date();
         system.getLogs().addEvent(new DestinationArrival(date, currentOffer.getOffer()));
         state = State.Available;
         offers.remove(currentOffer.getOffer());
     }
 
-    private void arrivalAtLocation(MainSystem system) {
+    public void arrivalAtLocation(MainSystem system) {
         Date date = new Date();
         system.getLogs().addEvent(new PickupArrival(date, currentOffer.getOffer()));
 
@@ -177,6 +174,7 @@ public class Driver extends User {
             System.out.println();
         }
     }
+
 
     public boolean containArea(String area) {
         return areas.contains(area);

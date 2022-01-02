@@ -159,7 +159,14 @@ public class Client extends User {
         offers.remove(choice - 1);
     }
 
-
+    public void removeOffer(int index)
+    {
+        offers.remove(index);
+    }
+    public void incrementRide()
+    {
+        this.numberofrides++;
+    }
     public String toString() {
         String string = "--Client--\n";
         string += this.getUserData().toString();

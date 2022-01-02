@@ -153,7 +153,7 @@ public class BaniSwvlController {
     }
 
     @GetMapping("/driver/getoffers")
-    public List<Offer> getOffers()
+    public List<Offer> getOffersDriver()
     {
         if (currentUser == null)
         {
@@ -193,7 +193,67 @@ public class BaniSwvlController {
     }
 
 
-//
+// client
+   @PostMapping("/client/ratedriver")
+   public String rateDriver(@RequestBody Map<String,String> json){
+     if(currentUser == null)
+         return "you are not logged in";
+     if(!(currentUser instanceof Client))
+     {
+         return "you are not a client";
+     }
+     int rating = Integer.parseInt(json.get("rating"));
+     String driverUserName = json.get("driverUserName");
+     String comment = "";
+     if(rating < 1 || rating > 5)
+           return "Rating should be from 1 to 5";
+     if(json.containsKey("comment")) {
+         comment = json.get("comment");
+     }
+     UserRating userRating = ((Client)currentUser).rateDriver(rating, comment);
+     boolean success = system.rateDriver(userRating, driverUserName);
+     if(success)
+         return "Rating submitted for" + driverUserName;
+     else
+         return "no such driver exists";
+    }
+
+    @GetMapping("/client/getoffers")
+    public List<Offer> getOffersClient()
+    {
+        if(currentUser == null)
+            return  null;
+        if(!(currentUser instanceof Client))
+        {
+            return null;
+        }
+        return ((Client)currentUser).getOffers();
+    }
+
+    @PostMapping("/client/acceptOffer")
+    public String acceptOffer(@RequestBody Map<String,String> json) {
+        if(currentUser == null)
+            return  null;
+        if(!(currentUser instanceof Client))
+        {
+            return null;
+        }
+        int offerIndex = Integer.parseInt(json.get("index"));
+
+        ArrayList<Offer> offers = ((Client)currentUser).getOffers();
+        if(offerIndex > offers.size() || offerIndex < 1)
+            return "please enter a valid index";
+        system.clientAcceptOffer(offers.get(offerIndex - 1), (Client) currentUser);
+        ((Client) currentUser).removeOffer(offerIndex - 1);
+        ((Client)currentUser).incrementRide();
+        return "Success! Driver is on his way";
+    }
+
+
+    
+
+
+//    some admin
     @GetMapping("/baniswvl/PendingDrivers")
     public ArrayList<Driver> getPendingDrivers(){
         if(currentUser instanceof Admin){

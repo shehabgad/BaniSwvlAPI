@@ -250,11 +250,11 @@ public class BaniSwvlController {
     }
 
 
-    
+
 
 
 //    some admin
-    @GetMapping("/baniswvl/PendingDrivers")
+    @GetMapping("/admin/PendingDrivers")
     public ArrayList<Driver> getPendingDrivers(){
         if(currentUser instanceof Admin){
             return system.ListPendingDrivers();
@@ -263,8 +263,10 @@ public class BaniSwvlController {
             return null;
     }
 
-    @PostMapping("/baniswvl/verifyDriver")
+    @PostMapping("/admin/verifyDriver")
     public String verifyDriver(@RequestBody String userName){
+        if(currentUser == null)
+            return "you are not logged in";
         if(currentUser instanceof Admin){
             ((Admin) currentUser).verifyDriverRegistration(userName,getPendingDrivers());
             return userName +" is accepted successfully!";

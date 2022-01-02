@@ -4,7 +4,8 @@ import com.example.Discounts.BirthdayDiscount;
 import com.example.Discounts.FirstRideDiscount;
 import com.example.Discounts.PublicHolidayDiscount;
 import com.example.Discounts.TwoPassengerDiscount;
-import com.example.Log.Log;
+import com.example.Log.*;
+
 import com.example.Log.MemoryLog;
 import com.example.Log.RideAcceptance;
 import com.example.Log.RideSetPrice;

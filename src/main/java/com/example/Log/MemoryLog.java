@@ -1,7 +1,6 @@
 package com.example.Log;
 
 import com.example.Rides.Offer;
-
 import java.util.ArrayList;
 
 public class MemoryLog implements Log {
@@ -18,6 +17,7 @@ public class MemoryLog implements Log {
             System.out.println(e.toString() + '\n');
         }
     }
+    @Override
     public ArrayList<Event> getEvents()
     {
         return events;
@@ -26,4 +26,5 @@ public class MemoryLog implements Log {
     public void addEvent(Event e) {
         events.add(e);
     }
+
 }

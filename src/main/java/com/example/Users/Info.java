@@ -47,7 +47,7 @@ public class Info {
     public String toString()
     {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return ("user name: " + userName + "\nmobile number: " + mobileNumber + "\nDate of Birth: " + formatter.format(dob) +"\nEmail: " + email);
+        return ("user name: " + userName + ", mobile number: " + mobileNumber + ", Date of Birth: " + formatter.format(dob) +", Email: " + email);
     }
     public String getUserName() {
         return userName;

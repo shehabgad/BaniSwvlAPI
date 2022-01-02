@@ -1,6 +1,7 @@
 package com.example.System;
 
-import com.example.Log.Log;
+import com.example.Log.DestinationArrival;
+import com.example.Log.*;
 import com.example.Rides.Offer;
 import com.example.Rides.RideRequest;
 import com.example.Users.*;

@@ -17,8 +17,8 @@ public class RideAcceptance implements Event {
     @Override
     public String toString() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        return ("Event Type: User accepts price set by Captain\n"
-                + "Event Time: " + formatter.format(this.eventTime) + "\n"
+        return (",Event Type: User accepts price set by Captain, "
+                + "Event Time: " + formatter.format(this.eventTime) + ", "
                 + "User's Name: " + this.clientUserName);
     }
 }

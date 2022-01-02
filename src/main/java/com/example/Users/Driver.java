@@ -2,12 +2,13 @@ package com.example.Users;
 
 import com.example.Log.DestinationArrival;
 import com.example.Log.PickupArrival;
+
 import com.example.Rides.Offer;
 import com.example.Rides.RideRequest;
 import com.example.System.MainSystem;
 import com.example.UI.Main;
-
 import java.util.*;
+import com.example.Log.*;
 
 public class Driver extends User {
     private final Set<String> areas;
@@ -61,7 +62,6 @@ public class Driver extends User {
         return null;
     }
 
-
     public User busyOptions(MainSystem system) {
         int choice = Main.input.nextInt();
         Main.input.nextLine();
@@ -81,6 +81,7 @@ public class Driver extends User {
         system.getLogs().addEvent(new DestinationArrival(date, currentOffer.getOffer()));
         state = State.Available;
         offers.remove(currentOffer.getOffer());
+        currentOffer = null;
     }
 
     public void arrivalAtLocation(MainSystem system) {

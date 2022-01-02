@@ -36,6 +36,6 @@ public class UserRating {
     }
     public String toString()
     {
-        return ("username: " + userName + "\nrating: " + rating + "\ncomment: " + comment);
+        return ("username: " + userName + ", rating: " + rating + ", comment: " + comment);
     }
 }

@@ -14,6 +14,10 @@ public class Offer {
     }
 
     public Offer() {
+        this.rideRequest = null;
+        this.price = 0;
+        this.driverRating = 0;
+        this.driverUserName = null;
     }
 
     public double getDriverRating() {
@@ -41,7 +45,7 @@ public class Offer {
     }
 
     public String toString() {
-        return (rideRequest + "\nOriginal Price: " + price + "\ndriver username: " + driverUserName + "\ndriver rating: " + driverRating);
+        return (rideRequest + ", Original Price: " + price + ", driver username: " + driverUserName + ", driver rating: " + driverRating);
     }
 
     public Offer getOffer() {

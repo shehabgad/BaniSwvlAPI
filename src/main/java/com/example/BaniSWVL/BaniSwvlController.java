@@ -1,5 +1,6 @@
 package com.example.BaniSWVL;
 
+import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.Map;
 import java.util.ArrayList;
@@ -27,8 +28,25 @@ import org.springframework.web.bind.annotation.RestController;
 public class BaniSwvlController {
     private MainSystem system;
     private User currentUser;
-    static User admin1 = new Admin(new Info("peter", "010000000", "0000000000", "00", null));
-    public BaniSwvlController() {system = new MemorySystem(); currentUser = null; system.addAdmin(admin1);}
+
+    public BaniSwvlController() {
+        system = new MemorySystem(); currentUser = null;
+        Date dummyDob = new Date();
+        User admin1 = new Admin(new Info("shehab", "010000000", "0000000000", "00", dummyDob));
+        User admin2 = new Admin(new Info("peter", "010000000", "0000000000", "00", dummyDob));
+        User admin3 = new Admin(new Info("david", "010000000", "0000000000", "00", dummyDob));
+        User admin4 = new Admin(new Info("a", "010000000", "0000000000", "0", dummyDob));
+        User testclient = new Client(new Info("c", "010000000", "0000000000", "0", dummyDob));
+        User testdriver = new Driver(new Info("d", "010000000", "0000000000", "0", dummyDob));
+        system.addAdmin(admin1);
+        system.addAdmin(admin2);
+        system.addAdmin(admin3);
+        system.addAdmin(admin4);
+        testdriver.setState(State.Available);
+        system.addAreaToDriver("giza", (Driver) testdriver);
+        system.addUser(testdriver);
+        system.addUser(testclient);
+    }
 
 //    authentication
     @PostMapping("/signup/user/client")
@@ -100,7 +118,22 @@ public class BaniSwvlController {
                 System.out.println("This account is suspended");
             }
         }
-        return "Welcome back " + currentUser.getUserData().getUserName() + " !";
+        String msg = "Welcome back " + currentUser.getUserData().getUserName() + " !";
+        if(currentUser instanceof Driver)
+        {
+            if(((Driver)currentUser).getCurrentOffer() != null)
+            {
+                msg+= ", you have an offer: ";
+                ArrayList<Offer> offers = ((Driver)currentUser).getOffers();
+                Offer currentOffer = ((Driver)currentUser).getCurrentOffer();
+
+                if (!offers.contains(currentOffer))
+                    msg+=currentOffer + "\nDiscounted Price: " + currentOffer.getPrice();
+                else
+                    msg+=currentOffer;
+            }
+        }
+        return msg;
     }
 
     @GetMapping("/logout")
@@ -157,7 +190,7 @@ public class BaniSwvlController {
     }
 
     @GetMapping("/driver/getoffers")
-    public List<Offer> getOffersDriver()
+    public List<String> getOffersDriver()
     {
         if (currentUser == null)
         {
@@ -165,7 +198,13 @@ public class BaniSwvlController {
         }
         if(!(currentUser instanceof Driver))
             return null;
-        return ((Driver) currentUser).getOffers();
+        ArrayList<Offer> offers = ((Driver) currentUser).getOffers();
+        ArrayList<String> offersStr = new ArrayList<String>();
+        for(int i = 0; i < offers.size(); i++)
+        {
+            offersStr.add(offers.get(i).toString());
+        }
+        return offersStr;
     }
     @GetMapping("/driver/notifyarrival")
     public String notifyArrival()
@@ -241,7 +280,7 @@ public class BaniSwvlController {
     }
 
     @GetMapping("/client/getoffers")
-    public List<Offer> getOffersClient()
+    public List<String> getOffersClient()
     {
         if(currentUser == null)
             return  null;
@@ -249,7 +288,13 @@ public class BaniSwvlController {
         {
             return null;
         }
-        return ((Client)currentUser).getOffers();
+        ArrayList<String> offersStr = new ArrayList<String>();
+        ArrayList<Offer> offers = ((Client)currentUser).getOffers();
+        for(int i = 0; i < offers.size(); i++)
+        {
+            offersStr.add(offers.get(i).toString());
+        }
+        return offersStr;
     }
 
     @PostMapping("/client/requestride")
@@ -350,6 +395,7 @@ public class BaniSwvlController {
         if(currentUser instanceof Admin){
             ArrayList<String> eventsStr = new ArrayList<String>();
             Log logs = system.getLogs();
+            logs.printLogs();
             ArrayList<Event> events = logs.getEvents();
             for(int i = 0; i < events.size(); i++)
                 eventsStr.add(events.get(i).toString());

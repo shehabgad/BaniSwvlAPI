@@ -5,6 +5,7 @@ public class RideRequest {
     private final String destination;
     private final String clientUserName;
     public int numberOfPassengers;
+
     public RideRequest(String src, String dest, String userName, int numberOfPassengers)
     {
         source = src;
@@ -34,6 +35,6 @@ public class RideRequest {
     }
     public String toString()
     {
-      return ("user name: " + clientUserName +"\nsource: " + source +"\ndestination: " + destination + "\nPassengers: " + numberOfPassengers);
+      return ("user name: " + clientUserName +", source: " + source +", destination: " + destination + ", Passengers: " + numberOfPassengers);
     }
 }

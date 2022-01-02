@@ -30,6 +30,7 @@ public class BaniSwvlController {
     private User currentUser;
     public BaniSwvlController() {system = new MemorySystem(); currentUser = null;}
 
+//    authentication
     @PostMapping("/signup/user/client")
     public String singupClient(@RequestBody Info info) {
         if(currentUser != null)
@@ -110,6 +111,8 @@ public class BaniSwvlController {
         return "Success! you are logged out";
 
     }
+
+//    driver
     @GetMapping("/driver/getrides")
     public List<RideRequest> getRideRequests(){
         if (currentUser == null)
@@ -178,6 +181,24 @@ public class BaniSwvlController {
         ((Driver)currentUser).arrivalAtLocation(system);
         return "client has been notified by your arrival";
     }
+
+    @GetMapping("/driver/listratings")
+    public ArrayList<UserRating> getRatings(){
+        if(currentUser instanceof Driver){return ((Driver) currentUser).ListUserRatings();}
+        else{return null;}
+    }
+
+    @PostMapping("/driver/addArea")
+    public String addArea(@RequestBody Map<String, String> json){
+        if(currentUser instanceof Driver){
+            String area = json.get("area");
+            boolean success = system.addAreaToDriver(area, (Driver) currentUser);
+            if (success) {return "area is added successfully";}
+            else{return "Area already exists!";}
+        }
+        else {return "Error";}
+    }
+
     @GetMapping("/driver/endride")
     public String endRide()
     {
@@ -231,6 +252,18 @@ public class BaniSwvlController {
         return ((Client)currentUser).getOffers();
     }
 
+    @PostMapping("/client/requestride")
+    public String requestRide(@RequestBody RideRequest rideRequest) {
+        if (currentUser instanceof Client) {
+            new RideRequest(rideRequest.getSource(), rideRequest.getDestination(),
+                    rideRequest.getClientUserName(), rideRequest.getNumberOfPassengers());
+            boolean success = system.updateSystemRideRequests(rideRequest);
+            if (success) {return "Relevant drivers have been notified...";}
+            else {return ("Area doesn't exist in our database!");}
+        }
+        else{return"Error";}
+    }
+
     @PostMapping("/client/acceptOffer")
     public String acceptOffer(@RequestBody Map<String,String> json) {
         if(currentUser == null)
@@ -254,15 +287,11 @@ public class BaniSwvlController {
 
 
 
-//    some admin
-    @GetMapping("/admin/PendingDrivers")
-    public ArrayList<Driver> getPendingDrivers(){
-        if(currentUser instanceof Admin){
-            return system.ListPendingDrivers();
-        }
-        else
-            return null;
-    }
+//    admin
+   @GetMapping("/admin/PendingDrivers")
+   public ArrayList<Driver> getPendingDrivers(){
+     if(currentUser instanceof Admin){return system.getPendingDrivers();}
+     else {return null;} }
     @GetMapping("/admin/getusers")
     public ArrayList<User> getAllUsers(){
         if(currentUser instanceof Admin){
@@ -274,13 +303,14 @@ public class BaniSwvlController {
 
     @PostMapping("/admin/verifyDriver")
     public String verifyDriver(@RequestBody String userName){
-        if(currentUser == null)
-            return "you are not logged in";
         if(currentUser instanceof Admin){
-            ((Admin) currentUser).verifyDriverRegistration(userName,getPendingDrivers());
-            return userName +" is accepted successfully!";
+            if(userName!=null && system.getPendingDrivers().contains(userName)) {
+                ((Admin) currentUser).verifyDriverRegistration(userName, getPendingDrivers());
+                return "Driver is accepted successfully!";
+            }
+            else{return "Driver doesn't exist!";}
         }
-        else{return "Error: you must be an admin";}
+        else{return "Error";}
     }
     @PostMapping("/admin/addDiscount")
     public String verifyDriver(@RequestBody Map<String,String> json){
@@ -301,6 +331,21 @@ public class BaniSwvlController {
             return "Error: you must be an admin";
         }
     }
+
+    @PostMapping("/admin/suspend")
+    public String suspendDriver(@RequestBody Map<String, String> json){
+        if(currentUser instanceof Admin){
+            String userName= json.get("userName");
+            if(userName!=null && system.getUser(userName)!=null ) {
+                User user = system.getUser(userName);
+                ((Admin) currentUser).suspendUser(user);
+                return "Driver is suspended successfully!";
+            }
+            else{return "Driver doesn't exist!";}
+        }
+        else{return "Error";}
+    }
+
     @GetMapping("/admin/getlogs")
     public ArrayList<String> getAllLogs(){
         if(currentUser instanceof Admin){

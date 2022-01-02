@@ -203,6 +203,13 @@ public class MemorySystem implements MainSystem {
         }
         System.out.println();
     }
+    public ArrayList<User> getAllUsers() {
+        ArrayList<User> users = new ArrayList<User>();
+        for (Map.Entry<String, User> e : userDatabase.entrySet()) {
+            users.add(e.getValue());
+        }
+        return users;
+    }
 
     public boolean listPendingDrivers() {
         if (pendingDrivers.size() == 0) {

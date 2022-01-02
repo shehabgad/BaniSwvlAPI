@@ -18,7 +18,10 @@ public class MemoryLog implements Log {
             System.out.println(e.toString() + '\n');
         }
     }
-
+    public ArrayList<Event> getEvents()
+    {
+        return events;
+    }
     @Override
     public void addEvent(Event e) {
         events.add(e);

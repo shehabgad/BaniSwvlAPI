@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import com.example.Log.Event;
 import com.example.Log.Log;
 import com.example.Rides.Offer;
 import com.example.Rides.RideRequest;
@@ -262,6 +263,14 @@ public class BaniSwvlController {
         else
             return null;
     }
+    @GetMapping("/admin/getusers")
+    public ArrayList<User> getAllUsers(){
+        if(currentUser instanceof Admin){
+            return system.getAllUsers();
+        }
+        else
+            return null;
+    }
 
     @PostMapping("/admin/verifyDriver")
     public String verifyDriver(@RequestBody String userName){
@@ -272,5 +281,37 @@ public class BaniSwvlController {
             return userName +" is accepted successfully!";
         }
         else{return "Error: you must be an admin";}
+    }
+    @PostMapping("/admin/addDiscount")
+    public String verifyDriver(@RequestBody Map<String,String> json){
+        if(currentUser == null)
+            return "you are not logged in";
+        if(currentUser instanceof Admin){
+            String area = json.get("area");
+            if(system.addAreaDiscounts(area))
+            {
+                return "Area added successfully...";
+            }
+            else
+            {
+                return "Area already discounted...";
+            }
+        }
+        else{
+            return "Error: you must be an admin";
+        }
+    }
+    @GetMapping("/admin/getlogs")
+    public ArrayList<String> getAllLogs(){
+        if(currentUser instanceof Admin){
+            ArrayList<String> eventsStr = new ArrayList<String>();
+            Log logs = system.getLogs();
+            ArrayList<Event> events = logs.getEvents();
+            for(int i = 0; i < events.size(); i++)
+                eventsStr.add(events.get(i).toString());
+            return eventsStr;
+        }
+        else
+            return null;
     }
 }
